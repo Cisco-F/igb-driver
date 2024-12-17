@@ -1,7 +1,5 @@
 use core::{ptr::NonNull, time::Duration};
 
-use log::debug;
-
 use crate::{
     descriptor::{AdvRxDesc, AdvTxDesc},
     err::IgbError,
@@ -61,6 +59,7 @@ impl Igb {
         Ok(())
     }
 
+    ///  Initialize all statistical counters
     fn init_stat(&mut self) {
         //TODO
     }

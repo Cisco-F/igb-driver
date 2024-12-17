@@ -1,4 +1,9 @@
-pub trait Descriptor {}
+use core::any::Any;
+
+pub trait Descriptor {
+    fn set_addr(&mut self, addr: u64);
+    fn as_any(&self) -> &dyn Any;
+}
 
 #[derive(Clone, Copy)]
 pub union AdvTxDesc {
@@ -6,7 +11,14 @@ pub union AdvTxDesc {
     pub write: AdvTxDescWB,
 }
 
-impl Descriptor for AdvTxDesc {}
+impl Descriptor for AdvTxDesc {
+    fn set_addr(&mut self, addr: u64) {
+        self.read.buffer_addr = addr;
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+}
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -30,7 +42,14 @@ pub union AdvRxDesc {
     pub write: AdvRxDescWB,
 }
 
-impl Descriptor for AdvRxDesc {}
+impl Descriptor for AdvRxDesc {
+    fn set_addr(&mut self, addr: u64) {
+        self.read.pkt_addr = addr;
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+}
 
 #[derive(Clone, Copy)]
 #[repr(C)]

@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 
-use core::{convert::Infallible, ptr::NonNull, time::Duration};
+use core::{ptr::NonNull, time::Duration};
 
 use bitflags::{bitflags, Flags};
 
