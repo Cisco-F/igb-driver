@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 
-use core::{convert::Infallible, ptr::NonNull, time::Duration};
+use core::{ptr::NonNull, time::Duration};
 
 use bitflags::{bitflags, Flags};
 
@@ -97,6 +97,7 @@ pub trait FlagReg: Flags<Bits = u32> {
 }
 
 /* Multicast Table Array - 128 entries */
+#[allow(unused)]
 fn mta(i: u32) -> u32 {
     0x05200 + i * 4
 }
@@ -267,4 +268,24 @@ bitflags! {
 
 impl FlagReg for SwFwSync {
     const REG: u32 = 0x05B5C;
+}
+
+bitflags! {
+    pub struct RXDCTL: u32 {
+        const ENBALE = 1 << 25;
+    }
+}
+
+impl FlagReg for RXDCTL {
+    const REG: u32 = 0x0C028;
+}
+
+bitflags! {
+    pub struct TXDCTL: u32 {
+        const ENABLE = 1 << 25;
+    }
+}
+
+impl FlagReg for TXDCTL {
+    const REG: u32 = 0x0E028;
 }

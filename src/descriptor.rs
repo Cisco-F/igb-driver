@@ -1,12 +1,19 @@
-pub trait Descriptor {}
+pub trait Descriptor {
+    fn set_addr(&mut self, addr: u64);
+}
 
+#[allow(unused)]
 #[derive(Clone, Copy)]
 pub union AdvTxDesc {
     pub read: AdvTxDescRead,
     pub write: AdvTxDescWB,
 }
 
-impl Descriptor for AdvTxDesc {}
+impl Descriptor for AdvTxDesc {
+    fn set_addr(&mut self, addr: u64) {
+        self.read.buffer_addr = addr;
+    }
+}
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -24,13 +31,18 @@ pub struct AdvTxDescWB {
     pub status: u32,
 }
 
+#[allow(unused)]
 #[derive(Clone, Copy)]
 pub union AdvRxDesc {
     pub read: AdvRxDescRead,
     pub write: AdvRxDescWB,
 }
 
-impl Descriptor for AdvRxDesc {}
+impl Descriptor for AdvRxDesc {
+    fn set_addr(&mut self, addr: u64) {
+        self.read.pkt_addr = addr;
+    }
+}
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -48,6 +60,7 @@ pub struct AdvRxDescWB {
     pub vlan: u16,
 }
 
+#[allow(unused)]
 #[derive(Clone, Copy)]
 pub union LoDword {
     pub data: u32,

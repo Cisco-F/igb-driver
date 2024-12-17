@@ -1,12 +1,10 @@
 use core::{ptr::NonNull, time::Duration};
 
-use log::debug;
-
 use crate::{
     descriptor::{AdvRxDesc, AdvTxDesc},
     err::IgbError,
     phy::Phy,
-    regs::{Reg, CTRL, CTRL_EXT, RCTL, STATUS, TCTL},
+    regs::{Reg, CTRL, CTRL_EXT, EIMS, RCTL, STATUS, TCTL},
     ring::{Ring, DEFAULT_RING_SIZE},
 };
 
@@ -61,6 +59,7 @@ impl Igb {
         Ok(())
     }
 
+    ///  Initialize all statistical counters
     fn init_stat(&mut self) {
         //TODO
     }
@@ -84,6 +83,7 @@ impl Igb {
 
     fn setup_phy_and_the_link(&mut self) -> Result<(), IgbError> {
         self.phy.power_up()?;
+        self.phy.configure();
         Ok(())
     }
 
@@ -92,7 +92,7 @@ impl Igb {
     }
 
     fn enable_interrupts(&self) {
-        //TODO
+        self.reg.write_32(EIMS, u32::MAX);
     }
 
     pub fn status(&self) -> IgbStatus {
