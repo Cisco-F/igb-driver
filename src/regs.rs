@@ -97,6 +97,7 @@ pub trait FlagReg: Flags<Bits = u32> {
 }
 
 /* Multicast Table Array - 128 entries */
+#[allow(unused)]
 fn mta(i: u32) -> u32 {
     0x05200 + i * 4
 }

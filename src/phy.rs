@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use log::{debug, error};
 
 use crate::{
@@ -69,16 +71,24 @@ impl Phy {
     }
 
     pub fn configure(&mut self) {
-        let status = self.read_mdic(1).unwrap();
-        debug!("status: {status:b}");
+        // let status = self.read_mdic(1).unwrap();
+        // debug!("status: {status:b}");
 
         let mut pctrl = self.read_mdic(0).unwrap();
-        debug!("{pctrl:b}");
+        // debug!("{pctrl:b}");
         pctrl |= 1 << 9;
         let _ = self.write_mdic(0, pctrl);
 
-        let status = self.read_mdic(0).unwrap();
-        debug!("status: {status:b}");
+        // while self.read_mdic(1).unwrap() & (1 << 5) != 1 {}
+        // debug!("auto negotiation completed");
+
+        // for i in 0..20 {
+        //     let t = self.read_mdic(1).unwrap();
+        //     debug!("{i} status: \t{t:b}");
+        // }
+
+        // let status = self.read_mdic(1).unwrap();
+        // debug!("status: {status:b}");
     }
 }
 
@@ -92,7 +102,7 @@ impl Synced {
         let semaphore = Semaphore::new(reg)?;
         let swmask = mask as u32;
         let fwmask = (mask as u32) << 16;
-        let mut swfw_sync = SwFwSync::empty();
+        let mut swfw_sync;
         loop {
             swfw_sync = reg.read_reg::<SwFwSync>();
             if (swfw_sync.bits() & (swmask | fwmask)) == 0 {
