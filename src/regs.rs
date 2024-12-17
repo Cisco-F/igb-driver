@@ -268,3 +268,13 @@ bitflags! {
 impl FlagReg for SwFwSync {
     const REG: u32 = 0x05B5C;
 }
+
+bitflags! {
+    pub struct RXDCTL: u32 {
+        const ENBALE = 1 << 25;
+    }
+}
+
+impl FlagReg for RXDCTL {
+    const REG: u32 = 0x0C028;
+}
