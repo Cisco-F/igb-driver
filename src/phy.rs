@@ -1,4 +1,4 @@
-use log::error;
+use log::{debug, error};
 
 use crate::{
     err::IgbError,
@@ -15,9 +15,9 @@ pub struct Phy {
 
 impl Phy {
     pub fn new(reg: Reg) -> Self {
-        // let mdic = reg.read_reg::<MDIC>();
-        // let addr = (mdic.bits() & MDIC::PHYADD.bits()) >> 21;
-        // debug!("phy addr: {}", addr);
+        let mdic = reg.read_reg::<MDIC>();
+        let addr = (mdic.bits() & MDIC::PHYADD.bits()) >> 21;
+        debug!("phy addr: {}", addr);
         Self { reg, addr: 1 }
     }
 
@@ -66,6 +66,19 @@ impl Phy {
         let mut mii_reg = self.read_mdic(PHY_CONTROL)?;
         mii_reg &= !MII_CR_POWER_DOWN;
         self.write_mdic(PHY_CONTROL, mii_reg)
+    }
+
+    pub fn configure(&mut self) {
+        let status = self.read_mdic(1).unwrap();
+        debug!("status: {status:b}");
+
+        let mut pctrl = self.read_mdic(0).unwrap();
+        debug!("{pctrl:b}");
+        pctrl |= 1 << 9;
+        let _ = self.write_mdic(0, pctrl);
+
+        let status = self.read_mdic(0).unwrap();
+        debug!("status: {status:b}");
     }
 }
 

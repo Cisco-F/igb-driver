@@ -1,5 +1,3 @@
-use core::any::Any;
-
 pub trait Descriptor {
     fn set_addr(&mut self, addr: u64);
 }

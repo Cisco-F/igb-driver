@@ -25,7 +25,6 @@ impl<D: Descriptor> Ring<D> {
         let len = self.descriptors.len();
         let descriptors = unsafe { core::slice::from_raw_parts_mut(ptr, len) };
 
-        let mut i = 1;
         for des in descriptors.iter_mut() {
             // allocate appropriate size for buffers
             let buffer: DVec<u8> = DVec::zeros(1, 4096, Direction::Bidirectional)
@@ -33,14 +32,6 @@ impl<D: Descriptor> Ring<D> {
             // store buffer pointer to descriptor
             let addr = buffer.bus_addr() as u64;
             des.set_addr(addr);
-
-            // if des.as_any().is::<AdvRxDesc>() {
-            //     debug!("NO: {i}, type: rx");
-            // } else if des.as_any().is::<AdvTxDesc>() {
-            //     debug!("NO: {i}, type: tx");
-            // }
-
-            i += 1;
         }
 
         if TypeId::of::<D>() == TypeId::of::<AdvRxDesc>() {

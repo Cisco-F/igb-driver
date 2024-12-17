@@ -83,6 +83,7 @@ impl Igb {
 
     fn setup_phy_and_the_link(&mut self) -> Result<(), IgbError> {
         self.phy.power_up()?;
+        self.phy.configure();
         Ok(())
     }
 
