@@ -278,3 +278,13 @@ bitflags! {
 impl FlagReg for RXDCTL {
     const REG: u32 = 0x0C028;
 }
+
+bitflags! {
+    pub struct TXDCTL: u32 {
+        const ENABLE = 1 << 25;
+    }
+}
+
+impl FlagReg for TXDCTL {
+    const REG: u32 = 0x0E028;
+}

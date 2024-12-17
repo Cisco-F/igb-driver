@@ -2,7 +2,6 @@ use core::any::Any;
 
 pub trait Descriptor {
     fn set_addr(&mut self, addr: u64);
-    fn as_any(&self) -> &dyn Any;
 }
 
 #[derive(Clone, Copy)]
@@ -14,9 +13,6 @@ pub union AdvTxDesc {
 impl Descriptor for AdvTxDesc {
     fn set_addr(&mut self, addr: u64) {
         self.read.buffer_addr = addr;
-    }
-    fn as_any(&self) -> &dyn Any {
-        self
     }
 }
 
@@ -45,9 +41,6 @@ pub union AdvRxDesc {
 impl Descriptor for AdvRxDesc {
     fn set_addr(&mut self, addr: u64) {
         self.read.pkt_addr = addr;
-    }
-    fn as_any(&self) -> &dyn Any {
-        self
     }
 }
 

@@ -3,7 +3,7 @@ use core::{any::TypeId, time::Duration};
 use dma_api::{DVec, Direction};
 use log::debug;
 
-use crate::{descriptor::{AdvRxDesc, AdvTxDesc, Descriptor}, err::IgbError, regs::{Reg, RXDCTL}};
+use crate::{descriptor::{AdvRxDesc, AdvTxDesc, Descriptor}, err::IgbError, regs::{Reg, RXDCTL, TXDCTL}};
 
 pub const DEFAULT_RING_SIZE: usize = 256;
 
@@ -34,11 +34,11 @@ impl<D: Descriptor> Ring<D> {
             let addr = buffer.bus_addr() as u64;
             des.set_addr(addr);
 
-            if des.as_any().is::<AdvRxDesc>() {
-                debug!("NO: {i}, type: rx");
-            } else if des.as_any().is::<AdvTxDesc>() {
-                debug!("NO: {i}, type: tx");
-            }
+            // if des.as_any().is::<AdvRxDesc>() {
+            //     debug!("NO: {i}, type: rx");
+            // } else if des.as_any().is::<AdvTxDesc>() {
+            //     debug!("NO: {i}, type: tx");
+            // }
 
             i += 1;
         }
@@ -70,7 +70,25 @@ impl<D: Descriptor> Ring<D> {
             );
             debug!("rx queue enabled");
         } else if TypeId::of::<D>() == TypeId::of::<AdvTxDesc>() {
-
+            // program the descriptor base address with the address of the region
+            let base = self.descriptors.bus_addr() as u64;
+            let base_addr_low = (base & 0xFFFF_FFF0) as u32;
+            let base_addr_high = (base >> 32) as u32;
+            self.reg.write_32(0x0E000, base_addr_low);
+            self.reg.write_32(0x0E004, base_addr_high);
+    
+            // Set the length register to the size of the descriptor ring
+            let ring_len = (len * core::mem::size_of::<D>()) as u32;
+            self.reg.write_32(0x0E008, ring_len & 0xFFFF_FFE0);
+    
+            // enable rx queue
+            self.reg.write_reg::<TXDCTL>(TXDCTL::ENABLE);
+            let _ = self.reg.wait_for(
+                |reg: TXDCTL| !reg.contains(TXDCTL::ENABLE),
+                Duration::from_millis(1),
+                Some(1000),
+            );
+            debug!("rx queue enabled");
         }
     }
 }

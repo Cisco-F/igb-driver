@@ -4,7 +4,7 @@ use crate::{
     descriptor::{AdvRxDesc, AdvTxDesc},
     err::IgbError,
     phy::Phy,
-    regs::{Reg, CTRL, CTRL_EXT, RCTL, STATUS, TCTL},
+    regs::{Reg, CTRL, CTRL_EXT, EIMS, RCTL, STATUS, TCTL},
     ring::{Ring, DEFAULT_RING_SIZE},
 };
 
@@ -91,7 +91,7 @@ impl Igb {
     }
 
     fn enable_interrupts(&self) {
-        //TODO
+        self.reg.write_32(EIMS, u32::MAX);
     }
 
     pub fn status(&self) -> IgbStatus {
